@@ -50,10 +50,10 @@ class Patient(Resource):
             return ("An Error occurred while creating {user}".format(user=name)),400
 
     
-    @UserModel.token_required
-    def get(current_user,self,hospital_name,id):
-        if not (current_user['admin'] or current_user['isdoctor']):
-            return({"message":"cannot get patient"}),401
+    '''@UserModel.token_requiredcurrent_user,'''
+    def get(self,hospital_name,id):
+        '''if not (current_user['admin'] or current_user['isdoctor']):
+            return({"message":"cannot get patient"}),401'''
         hospital = HospitalModel(hospital_name)
         hosp = hospital.check_hospital_exist(hospital_name)
         if hosp:
@@ -64,10 +64,10 @@ class Patient(Resource):
             return('{name} Hospital does not exist'.format(name = hospital_name)),404
 
     
-    @UserModel.token_required
-    def put(current_user,self,hospital_name,id):
-        if not( current_user['admin'] or current_user['isdoctor']):
-            return({"message":"cannot create update patient record"}),401
+    '''@UserModel.token_requiredcurrent_user,'''
+    def put(self,hospital_name,id):
+        '''if not( current_user['admin'] or current_user['isdoctor']):
+            return({"message":"cannot create update patient record"}),401'''
         patient=PatientModel(hospital_name)
         parser = reqparse.RequestParser()
         parser.add_argument(
@@ -91,10 +91,10 @@ class Patient(Resource):
         return (update),200
 
     
-    @UserModel.token_required
-    def delete(current_user,self,hospital_name,id):
-        if not current_user['admin']:
-            return({"message":"cannot delete patient"}),401
+    '''@UserModel.token_requiredcurrent_user,'''
+    def delete(self,hospital_name,id):
+        '''if not current_user['admin']:
+            return({"message":"cannot delete patient"}),401'''
         patient=PatientModel(hospital_name)
         patRec = patient.delete_patient_rec(id)
         return(patRec),200
@@ -102,10 +102,10 @@ class Patient(Resource):
 class PatientList(Resource):
     
     
-    @UserModel.token_required
-    def get(current_user,self,hospital_name):
-        if not (current_user['admin'] or current_user['isdoctor']):
-            return({"message":"cannot get the list of patient"}),401
+    '''@UserModel.token_requiredcurrent_user,'''
+    def get(self,hospital_name):
+        '''if not (current_user['admin'] or current_user['isdoctor']):
+            return({"message":"cannot get the list of patient"}),401'''
         hospital = HospitalModel(hospital_name)
         hosp = hospital.check_hospital_exist(hospital_name)
         if hosp:
