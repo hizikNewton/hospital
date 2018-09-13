@@ -40,4 +40,4 @@ api.add_resource(UserLogin,'/user/login','/users','/user/login/admin/<string:use
 
 
 if (__name__) == ('__main__'):
-    app.run(port=5000,debug=True) 
+    app.run(port=5000,debug=False) 
