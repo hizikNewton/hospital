@@ -7,7 +7,7 @@ from resource.patient import Patient,PatientList
 from resource.doctor import Doctor,DoctorRecord
 from resource.user import User,UserLogin
 from resource.record import Record
-from app import app
+
 
 from model.userModel import UserModel
 
