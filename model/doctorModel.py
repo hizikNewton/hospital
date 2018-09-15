@@ -4,6 +4,10 @@ from .userModel import UserModel
 import uuid
 from werkzeug.security import generate_password_hash
 
+import os
+import boto3
+from botocore.client import Config
+
 
 connection = pymysql.connect(host ='w29ifufy55ljjmzq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',user= 'uv1eihe9iofpoot5',port = 3306,password = 'ovykxit5f71gx86b',database = 'vzcwzzkfkigclq3d')
 class DoctorModel:
@@ -41,8 +45,9 @@ class DoctorModel:
             doctor_userid = str(uuid.uuid4())[0:8]
             username = name
             password = generate_password_hash(surname) 
+            imgurl = 'https://s3.us-east-2.amazonaws.com/hospital-bucket/default-doctor.jpg'
             self.user.insert_user(doctor_userid,username,password,timestamp)
-            query = f"INSERT INTO {table} (doctor_userid,doctor_name,doctor_surname,specialization,biodata,timestamp)VALUES({repr(doctor_userid)},{repr(name)},{repr(surname)},{repr(spec)},{repr(biodata)},{repr(timestamp)})"
+            query = f"INSERT INTO {table} (doctor_userid,doctor_name,doctor_surname,specialization,imgurl,biodata,timestamp)VALUES({repr(doctor_userid)},{repr(name)},{repr(surname)},{repr(spec)},{repr(imgurl)},{repr(biodata)},{repr(timestamp)})"
             cursor.execute(query)
             connection.commit()
         
@@ -135,4 +140,36 @@ class DoctorModel:
             return("id not found"),404
 
             
+
+    def uploadImg(self,filepath,id):
+        table = self.table
+        file_name = os.path.basename(filepath)
+        ACCESS_KEY_ID = 'AKIAJJIDJDFNP3PUNJZQ'
+        ACCESS_SECRET_KEY = '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'
+        BUCKET_NAME = 'hospital-bucket'
+        FILE_NAME = file_name
+
+
+        data = open(filepath, 'rb')
+
+# S3 Connect
+        s3 = boto3.resource(
+        's3',
+        aws_access_key_id=ACCESS_KEY_ID,
+        aws_secret_access_key=ACCESS_SECRET_KEY,
+        config=Config(signature_version='s3v4')
+        )
+
+# Image Uploaded
+        s3.Bucket(BUCKET_NAME).put_object(Key=FILE_NAME, Body=data, ACL='public-read')
+        imgurl = os.path.join("https://s3.us-east-2.amazonaws.com/hospital-bucket/",file_name)
+        with connection.cursor() as cursor:
+            query = f"UPDATE {table} SET imgurl = {repr(imgurl)} WHERE {table}.id={id}"
+            
+            try:
+                cursor.execute(query)
+                connection.commit()
+                return("upload successful")
+            except:
+                return ("unable to upload image")
 

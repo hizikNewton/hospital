@@ -138,6 +138,23 @@ class DoctorRecord(Resource):
 
 
 
-
-        
+    '''@UserModel.token_required current_user,'''
+    def put(self,hospital_name,id):
+        '''if not (current_user['isdoctor'] or current_user['admin']):
+            return({"message":"cannot create hospital"}),401'''
+        doctor=DoctorModel(hospital_name)
+        parser = reqparse.RequestParser()
+        parser.add_argument(
+        "path",
+        type = str,
+        required = True,
+        help = "image path must should be specified:path\\to\\file"
+        )
+        data = parser.parse_args()
+        path = data['path']
+        try:
+            doctor.uploadImg(path,id)
+            return ("successful"),200
+        except:
+            return("Verify upload path and image exist"),404
 
