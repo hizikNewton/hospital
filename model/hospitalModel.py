@@ -28,7 +28,7 @@ class HospitalModel():
         
         create_hospital = "CREATE TABLE IF NOT EXISTS {hospital}(id MEDIUMINT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT)".format(hospital=tableitem['hospital_name'])
 
-        create_doctor_table = "CREATE TABLE IF NOT EXISTS {hospital_doctors}(id MEDIUMINT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,doctor_userid VARCHAR(10),doctor_surname VARCHAR(40),doctor_name VARCHAR(40),specialization VARCHAR(40),biodata TEXT,timestamp DATETIME)".format(hospital_doctors=tableitem['hdoctors'])
+        create_doctor_table = "CREATE TABLE IF NOT EXISTS {hospital_doctors}(id MEDIUMINT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,doctor_userid VARCHAR(10),doctor_surname VARCHAR(40),doctor_name VARCHAR(40),specialization VARCHAR(40),imgurl VARCHAR(100),biodata TEXT,timestamp DATETIME)".format(hospital_doctors=tableitem['hdoctors'])
 
         create_patient_table = "CREATE TABLE IF NOT EXISTS {hospital_patients}(id MEDIUMINT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,patient_name VARCHAR(40),record TEXT,category VARCHAR(40),doctor_id MEDIUMINT,FOREIGN KEY(doctor_id) REFERENCES {doctors}(id) ON DELETE CASCADE)".format(hospital_patients=tableitem['hpatients'],doctors=tableitem['hdoctors'],patient_rec = tableitem['hpatients_rec'] )
         user = UserModel()
