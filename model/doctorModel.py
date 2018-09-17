@@ -24,7 +24,9 @@ class DoctorModel:
 
 
     def json(self,*args):
-        return {"id":args[0],
+        return {
+        "hospital":self.hospital_name,
+        "id":args[0],
         "doctor_userid":args[1],
         "doctor_surname":args[2],
         "doctor_name":args[3],
@@ -145,11 +147,10 @@ class DoctorModel:
     def uploadImg(self,filepath,id):
         table = self.table
         file_name = os.path.basename(filepath)
-        ACCESS_KEY_ID = 'AKIAJJIDJDFNP3PUNJZQ'
-        ACCESS_SECRET_KEY = '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'
-        BUCKET_NAME = 'hospital-bucket'
+        ACCESS_KEY_ID = app.config['S3_KEY']
+        ACCESS_SECRET_KEY = app.config['S3_SECRET']
+        BUCKET_NAME = app.config['S3_BUCKET']
         FILE_NAME = file_name
-
 
         data = open(filepath, 'rb')
 

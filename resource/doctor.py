@@ -44,7 +44,7 @@ class Doctor(Resource):
         try:
             doctor.insert_doctor()
         except:
-            return ("An Error occurred while creating {user}".format(user=doctor_name)),503
+            return ("An Error occurred while creating {user}".format(user=doctor_name)),404
         return "Doctor created",201
 
     
