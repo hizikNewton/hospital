@@ -29,7 +29,8 @@ class DoctorModel:
         "doctor_surname":args[2],
         "doctor_name":args[3],
         "specialization":args[4],
-        "biodata":args[5]
+        "imgurl":args[5],
+        "biodata":args[6]
         }
 
 #create a doctor and a user at the sametime 
