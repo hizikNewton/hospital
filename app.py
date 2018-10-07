@@ -36,7 +36,7 @@ api.add_resource(PatientList,'/hospital/<string:hospital_name>/patients')
 
 api.add_resource(Doctor,'/hospital/<string:hospital_name>/doctor','/hospital/<string:hospital_name>/doctor/<int:id>')
 
-api.add_resource(DoctorRecord,'/hospital/<string:hospital_name>/doctors','/hospital/<string:hospital_name>/doctor/<int:id>/<string:dbcolumn>','/hospital/<string:hospital_name>/doctor/<int:id>/upload')
+api.add_resource(DoctorRecord,'/hospital/<string:hospital_name>/doctors','/hospital/<string:hospital_name>/doctor/<int:id>/<string:dbcolumn>','/hospital/<string:hospital_name>/doctor/upload')
 
 api.add_resource(Record,'/hospital/<string:hospital_name>/loadcsvrecord')
 

@@ -2,14 +2,19 @@ import pymysql
 import datetime
 from .userModel import UserModel
 import uuid
-from werkzeug.security import generate_password_hash
-
 import os
-import boto3
-from botocore.client import Config
-
-
+import json
+from werkzeug.security import generate_password_hash
+from firebase import firebase
+from google.cloud import storage
+from google.cloud.storage import client
+import firebase_admin
+import pyrebase
+from firebase_admin import credentials,storage,auth
 connection = pymysql.connect(host ='w29ifufy55ljjmzq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',user= 'uv1eihe9iofpoot5',port = 3306,password = 'ovykxit5f71gx86b',database = 'vzcwzzkfkigclq3d')
+
+
+from mycred import cred
 class DoctorModel:
     
     def __init__(self,hospital_name,doctor_surname='',doctor_name='',spec='',biodata=''):
@@ -47,8 +52,7 @@ class DoctorModel:
             timestamp = self.timestamp.replace('T',' ')
             doctor_userid = str(uuid.uuid4())[0:8]
             username = name
-            password = generate_password_hash(surname) 
-            imgurl = 'https://s3.us-east-2.amazonaws.com/hospital-bucket/default-doctor.jpg'
+            password = generate_password_hash(surname)
             self.user.insert_user(doctor_userid,username,password,timestamp)
             query = f"INSERT INTO {table} (doctor_userid,doctor_name,doctor_surname,specialization,imgurl,biodata,timestamp)VALUES({repr(doctor_userid)},{repr(name)},{repr(surname)},{repr(spec)},{repr(imgurl)},{repr(biodata)},{repr(timestamp)})"
             cursor.execute(query)
@@ -142,32 +146,47 @@ class DoctorModel:
         else:
             return("id not found"),404
 
-            
-
-    def uploadImg(self,filepath,id):
-        table = self.table
+    '''def uploadImg(self,filepath,id,secretkey):
         file_name = os.path.basename(filepath)
-        ACCESS_KEY_ID = app.config['S3_KEY']
-        ACCESS_SECRET_KEY = app.config['S3_SECRET']
-        BUCKET_NAME = app.config['S3_BUCKET']
-        FILE_NAME = file_name
+        fb = firebase.FirebaseApplication("https://hepatitis-mobile.firebaseio.com/", None)
 
-        data = open(filepath, 'rb')
+        fb.post('/image',filepath)
+        cred = credentials.Certificate('myCred.json')
+        firebase_admin.initialize_app(credential=cred,options={
+            'storageBucket': 'gs://hepatitis-mobile.appspot.com'
+        })
+        firebase_admin.storage.bucket(name='gs://hepatitis-mobile.appspot.com')
+        bucket = storage.bucket()
+        print (bucket)
 
-# S3 Connect
-        s3 = boto3.resource(
-        's3',
-        aws_access_key_id=ACCESS_KEY_ID,
-        aws_secret_access_key=ACCESS_SECRET_KEY,
-        config=Config(signature_version='s3v4')
-        )
+        imageBlob = bucket.blob(file_name)
+        print(imageBlob)'''
 
-# Image Uploaded
-        s3.Bucket(BUCKET_NAME).put_object(Key=FILE_NAME, Body=data, ACL='public-read')
-        imgurl = os.path.join("https://s3.us-east-2.amazonaws.com/hospital-bucket/",file_name)
+     
+
+    def uploadwithPyre(self,filepath,secretkey,current_user):
+        table = self.table
+        filename_user = current_user["username"]
+        cred['private_key'] = secretkey
+        userid = current_user["userid"]
+        
+        config = {
+        "apiKey": "apiKey",
+        "authDomain": "hepatitis-mobile.firebaseapp.com",
+        "databaseURL": "https://hepatitis-mobile.firebaseio.com",
+        "storageBucket": "hepatitis-mobile.appspot.com",
+        "serviceAccount":cred
+        }
+
+        storage_path = f'image/{userid}/{filename_user}'
+        firebase = pyrebase.initialize_app(config)
+        storage = firebase.storage()
+        storage.child(storage_path).put(filepath)
+        imgurl = storage.child(storage_path).get_url(current_user["userid"])
+        print(imgurl)
+
         with connection.cursor() as cursor:
             query = f"UPDATE {table} SET imgurl = {repr(imgurl)} WHERE {table}.id={id}"
-            
             try:
                 cursor.execute(query)
                 connection.commit()

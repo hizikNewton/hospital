@@ -7,11 +7,10 @@ from model.userModel import UserModel
 
 class Doctor(Resource):
     
-    
-    '''@UserModel.token_requiredcurrent_user,'''
-    def post(self,hospital_name):
-        '''if not current_user['admin']:
-            return({"message":"cannot create hospital"}),401'''
+    @UserModel.token_required
+    def post(current_user,self,hospital_name):
+        if not current_user['admin']:
+            return({"message":"cannot create hospital"}),401
         parser = reqparse.RequestParser()
         parser.add_argument(
         'name',
@@ -138,10 +137,10 @@ class DoctorRecord(Resource):
 
 
 
-    '''@UserModel.token_required current_user,'''
-    def put(self,hospital_name,id):
-        '''if not (current_user['isdoctor'] or current_user['admin']):
-            return({"message":"cannot create hospital"}),401'''
+    @UserModel.token_required
+    def put(current_user,self,hospital_name):
+        if not (current_user['isdoctor'] or current_user['admin']):
+            return({"message":"cannot create hospital"}),401
         doctor=DoctorModel(hospital_name)
         parser = reqparse.RequestParser()
         parser.add_argument(
@@ -150,11 +149,20 @@ class DoctorRecord(Resource):
         required = True,
         help = "image path must should be specified:path\\to\\file"
         )
+        parser.add_argument(
+        "privatekey",
+        type = str,
+        required = True,
+        help = "doctors must have my private key"
+        )
         data = parser.parse_args()
         path = data['path']
+        privatekey = data['privatekey']
+        
+        
         try:
-            doctor.uploadImg(path,id)
+            doctor.uploadwithPyre(path,privatekey,current_user)
             return ("successful"),200
         except:
-            return("Verify upload path and image exist"),404
+            return("Verify upload path and ensure image exist"),404
 

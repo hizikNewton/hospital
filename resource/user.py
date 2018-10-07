@@ -55,7 +55,7 @@ class User(Resource):
     
 class UserLogin(Resource):
 
-    def get(self):
+    def post(self):
         auth = request.authorization
         user = UserModel()
         result = user.login(auth)
