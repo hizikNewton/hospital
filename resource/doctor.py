@@ -4,6 +4,9 @@ import json
 from flask_restful import Resource
 from model.doctorModel import DoctorModel
 from model.userModel import UserModel
+from flask_cors import cross_origin
+
+
 
 class Doctor(Resource):
     
@@ -125,6 +128,8 @@ class DoctorRecord(Resource):
 
         
     '''@UserModel.token_required current_user,'''
+    
+    @cross_origin(headers=['Content-Type'])
     def get(self,hospital_name,id,dbcolumn):
         '''if not (current_user['isdoctor'] or current_user['admin']):
             return({"message":"cannot create hospital"}),401'''
