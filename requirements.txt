@@ -12,6 +12,7 @@ cryptography==2.3.1
 docutils==0.14
 firebase-admin==2.13.0
 Flask==1.0.2
+Flask-Cors==3.0.6
 Flask-JWT==0.3.2
 Flask-MySQL==1.4.0
 Flask-RESTful==0.3.6
