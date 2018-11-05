@@ -5,7 +5,7 @@ from flask_jwt import JWT,jwt_required,jwt
 
 from resource.hospital import Hospital,Hospitals
 from resource.patient import Patient,PatientList
-from resource.doctor import Doctor,DoctorRecord
+from resource.doctor import Doctor,DoctorRecord,Doctors
 from resource.user import User,UserLogin
 from resource.record import Record
 
@@ -28,6 +28,7 @@ parser = reqparse.RequestParser()
 
 
 
+api.add_resource(Doctors,'/doctors')
 api.add_resource(Hospital,'/hospital','/hospital/<string:hospital_name>')
 api.add_resource(Hospitals,'/hospitals')
 
@@ -35,6 +36,7 @@ api.add_resource(Patient,'/hospital/<string:hospital_name>/patient','/hospital/<
 api.add_resource(PatientList,'/hospital/<string:hospital_name>/patients')
 
 api.add_resource(Doctor,'/hospital/<string:hospital_name>/doctor','/hospital/<string:hospital_name>/doctor/<int:id>')
+
 
 api.add_resource(DoctorRecord,'/hospital/<string:hospital_name>/doctors','/hospital/<string:hospital_name>/doctor/<int:id>/<string:dbcolumn>','/hospital/<string:hospital_name>/doctor/upload')
 

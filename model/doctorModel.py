@@ -17,7 +17,7 @@ connection = pymysql.connect(host ='w29ifufy55ljjmzq.cbetxkdyhwsb.us-east-1.rds.
 from mycred import cred
 class DoctorModel:
     
-    def __init__(self,hospital_name,doctor_surname='',doctor_name='',spec='',biodata=''):
+    def __init__(self,hospital_name='',doctor_surname='',doctor_name='',spec='',biodata=''):
         self.doctor_name = doctor_name
         self.doctor_surname = doctor_surname
         self.hospital_name = hospital_name.lower()
@@ -64,7 +64,6 @@ class DoctorModel:
         path = path
         with connection.cursor() as cursor:
             query = f'''LOAD DATA INFILE {repr(path)} INTO TABLE {table_name} COLUMNS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY "\n" '''
-            print(query)
             cursor.execute(query)
             connection.commit()
 
@@ -183,7 +182,6 @@ class DoctorModel:
         storage = firebase.storage()
         storage.child(storage_path).put(filepath)
         imgurl = storage.child(storage_path).get_url(current_user["userid"])
-        print(imgurl)
 
         with connection.cursor() as cursor:
             query = f"UPDATE {table} SET imgurl = {repr(imgurl)} WHERE {table}.id={id}"
@@ -194,3 +192,23 @@ class DoctorModel:
             except:
                 return ("unable to upload image")
 
+
+
+    def get_all_doctors(self):
+        doctors = []
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute('show tables')
+                result = cursor.fetchall()
+                for items in result:
+                    if items[0][-7:]=='doctors':
+                        item = items[0]
+                        query = (f'SELECT * FROM {item}')
+                        cursor.execute(query)
+                        result = cursor.fetchall()
+                        result = self.json(*result[0])
+                        doctors.append(result)
+                        
+                return (doctors)
+            except:
+                return ("unable to get list of all doctors")

@@ -85,3 +85,5 @@ class Hospitals(Resource):
         return({'list of all hospitals':hospitals}),200
 
 
+
+

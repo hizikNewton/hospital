@@ -101,7 +101,8 @@ class HospitalModel():
             except:
                 return("cannot get list of hospital name")
         connection.close()
-    
+
+
     def update_hospital(self,new_name):
         table =  self.create_table_data(self.hospital_name)
         new_table = self.create_table_data(new_name)

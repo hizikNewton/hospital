@@ -166,3 +166,13 @@ class DoctorRecord(Resource):
         except:
             return("Verify upload path and ensure image exist"),404
 
+class Doctors(Resource):
+
+    def get(self):
+        '''if not (current_user['isdoctor'] or current_user['admin']):
+        return({"message":"cannot create hospital"}),401'''
+        doctor=DoctorModel()
+        doctorList = doctor.get_all_doctors()
+        print(doctorList)
+        return(doctorList),200
+
