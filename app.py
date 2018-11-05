@@ -2,6 +2,7 @@ import os
 from flask import Flask,jsonify,request
 from flask_restful import Api,reqparse
 from flask_jwt import JWT,jwt_required,jwt
+from flask_cors import CORS
 
 from resource.hospital import Hospital,Hospitals
 from resource.patient import Patient,PatientList
@@ -14,10 +15,13 @@ from model.userModel import UserModel
 
 
 app = Flask('__name__',instance_relative_config=True)
+CORS(app, resources = r'/*',headers = 'Content-Type')
+
 
 app.config['JAWSDB_URL']= 'mysql://pwpx9lp53pp7oobn:q4f6xa3l2ter9vvk@l3855uft9zao23e2.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:3306/hrnvjd7k86z6nj96'
 
 app.config['secret_key'] = 'OLURIN ANUOLUWAPO'
+
 api = Api(app)
 parser = reqparse.RequestParser()
 
