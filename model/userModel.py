@@ -6,7 +6,7 @@ import pymysql
 import datetime
 from functools import wraps 
 
-connection = pymysql.connect(host ='w29ifufy55ljjmzq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',user= 'uv1eihe9iofpoot5',port = 3306,password = 'ovykxit5f71gx86b',database = 'vzcwzzkfkigclq3d')
+connection = pymysql.connect(host ='er7lx9km02rjyf3n.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',user= 'v98vj2rnkd8xjsbn',port = 3306,password = 'juvam2griraafgz2',database = 'ec40ra1bb5ef3pkr')
 from flask_restful import reqparse,Resource,request
 
 
@@ -122,20 +122,44 @@ class UserModel():
                 user = self.json(*user)
                 return user
         
-            
+    def get_all(self):
+        with connection.cursor() as cursor:
+            users = []
+            query = f'SELECT * FROM users'
+            cursor.execute(query)
+            user = cursor.fetchall()
+            for item in user:
+                user = self.json(*item)
+                users.append(user)
+        return users
 
-    def promote_user_doc(self,userid):
+
+
+
+    def promote_user_doc(self,hospital,userid):
+        table = hospital+"_doctors"
+        name=surname=spec=biodata=imgurl= ''
+        timestamp = datetime.datetime.now().isoformat(timespec='seconds')
+
         if(self.check_('userid',userid)):
             with connection.cursor() as cursor:
-                userid = userid
                 isdoctor = True
                 query = f"UPDATE users SET users.isdoctor = {isdoctor} WHERE users.userid={repr(userid)}"
                 cursor.execute(query)
                 connection.commit()
+
+                user = self.get_one('userid',userid)
+                
+                query = f"INSERT INTO {table} (doctor_userid,doctor_name,doctor_surname,specialization,imgurl,biodata,timestamp)VALUES({repr(userid)},{repr(name)},{repr(surname)},{repr(spec)},{repr(imgurl)},{repr(biodata)},{repr(timestamp)})"
+
+                cursor.execute(query)
+                connection.commit()
+
             return("User promoted to doctor")
         else:
             return('id not found'),404
 
+            
 
     def promote_user_admin(self,userid):
         if(self.check_('userid',userid)):
@@ -162,7 +186,7 @@ class UserModel():
             return("id not found"),404
 
 
-    '''def delete_user_table(self):
+    def delete_user_table(self):
         with connection.cursor() as cursor:
             query = ("DROP TABLE users")
             try:
@@ -170,7 +194,7 @@ class UserModel():
                 connection.commit()
             except:
                 return({"message":"Error deleting table user"})
-            return({"message":"User table deleted successfully"}),200'''
+            return({"message":"User table deleted successfully"}),200
 
     def login(self,auth):
         if (not auth or not auth['username'] or not auth['password']):

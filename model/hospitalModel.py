@@ -1,7 +1,7 @@
 import pymysql
 from .userModel import UserModel
 
-connection = pymysql.connect(host ='w29ifufy55ljjmzq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',user= 'uv1eihe9iofpoot5',port = 3306,password = 'ovykxit5f71gx86b',database = 'vzcwzzkfkigclq3d')
+connection = pymysql.connect(host ='er7lx9km02rjyf3n.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',user= 'v98vj2rnkd8xjsbn',port = 3306,password = 'juvam2griraafgz2',database = 'ec40ra1bb5ef3pkr')
 
 class HospitalModel():
 
@@ -28,9 +28,9 @@ class HospitalModel():
         
         create_hospital = "CREATE TABLE IF NOT EXISTS {hospital}(id MEDIUMINT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT)".format(hospital=tableitem['hospital_name'])
 
-        create_doctor_table = "CREATE TABLE IF NOT EXISTS {hospital_doctors}(id MEDIUMINT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,doctor_userid VARCHAR(10),doctor_surname VARCHAR(40),doctor_name VARCHAR(40),specialization VARCHAR(40),imgurl VARCHAR(100),biodata TEXT,timestamp DATETIME)".format(hospital_doctors=tableitem['hdoctors'])
+        create_doctor_table = "CREATE TABLE IF NOT EXISTS {hospital_doctors}(id MEDIUMINT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,doctor_userid VARCHAR(10),doctor_surname VARCHAR(40),doctor_name VARCHAR(40),specialization VARCHAR(40),imgurl VARCHAR(1000),biodata TEXT,timestamp DATETIME)".format(hospital_doctors=tableitem['hdoctors'])
 
-        create_patient_table = "CREATE TABLE IF NOT EXISTS {hospital_patients}(id MEDIUMINT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,patient_name VARCHAR(40),record TEXT,category VARCHAR(40),doctor_id MEDIUMINT,FOREIGN KEY(doctor_id) REFERENCES {doctors}(id) ON DELETE CASCADE)".format(hospital_patients=tableitem['hpatients'],doctors=tableitem['hdoctors'],patient_rec = tableitem['hpatients_rec'] )
+        create_patient_table = "CREATE TABLE IF NOT EXISTS {hospital_patients}(id MEDIUMINT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,patient_surname VARCHAR(40),patient_name VARCHAR(40),imgurl VARCHAR(1000),record TEXT,biodata TEXT,timestamp DATETIME,category VARCHAR(40),doctor_id MEDIUMINT,FOREIGN KEY(doctor_id) REFERENCES {doctors}(id) ON DELETE CASCADE)".format(hospital_patients=tableitem['hpatients'],doctors=tableitem['hdoctors'],patient_rec = tableitem['hpatients_rec'] )
         user = UserModel()
         with connection.cursor() as cursor:
             

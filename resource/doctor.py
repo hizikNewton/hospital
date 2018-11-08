@@ -13,7 +13,7 @@ class Doctor(Resource):
     @UserModel.token_required
     def post(current_user,self,hospital_name):
         if not current_user['admin']:
-            return({"message":"cannot create hospital"}),401
+            return({"message":"cannot create Doctor"}),401
         parser = reqparse.RequestParser()
         parser.add_argument(
         'name',
@@ -43,6 +43,7 @@ class Doctor(Resource):
         biodata = data['biodata']
         spec = data['specialization']
         doctor=DoctorModel(hospital_name,doctor_surname,doctor_name,spec,biodata)
+        
         try:
             doctor.insert_doctor()
         except:
@@ -60,7 +61,7 @@ class Doctor(Resource):
 
     
     '''@UserModel.token_requiredcurrent_user,'''
-    def put(self,hospital_name,id):
+    def put(self,hospital_name,userid):
         '''if not (current_user['isdoctor'] or current_user['admin']):
             return({"message":"cannot update doctor"}),401'''
 
@@ -70,24 +71,36 @@ class Doctor(Resource):
             "name"
         )
         parser.add_argument(
+            "surname"
+        )
+        parser.add_argument(
             "specialization"
         )
         parser.add_argument(
             "biodata"
         )
+        parser.add_argument(
+            "imgurl"
+        )
         data = parser.parse_args()
-        updatedict = {"doctor_name":data['name'],
+        updatedict = {
+        "doctor_name":data['name'],
+        "doctor_surname":data['surname'],
         "specialization":data['specialization'],
-        "biodata":data['biodata']
+        "biodata":data['biodata'],
+        "imgurl":data['imgurl']
         }
         empty = list(filter(lambda i:updatedict[i]==None,updatedict))
         for i in empty:
             updatedict.pop(i)
+        update = doctor.update_doctor_record(userid,updatedict)
+        print(update)
+        
         try:
-            update = doctor.update_doctor_record(id,updatedict)
             return (update),200
         except:
-            return({"message":"cannot update doctor's record"}),404
+            return({"message":"cannot update doctor's record"}),404 
+        
 
     
     '''@UserModel.token_requiredcurrent_user,'''
@@ -164,10 +177,9 @@ class DoctorRecord(Resource):
         path = data['path']
         privatekey = data['privatekey']
         
-        
         try:
-            doctor.uploadwithPyre(path,privatekey,current_user)
-            return ("successful"),200
+            result = doctor.uploadwithPyre(path,privatekey,current_user)
+            return ({"res":result}),200
         except:
             return("Verify upload path and ensure image exist"),404
 
@@ -178,6 +190,5 @@ class Doctors(Resource):
         return({"message":"cannot create hospital"}),401'''
         doctor=DoctorModel()
         doctorList = doctor.get_all_doctors()
-        print(doctorList)
         return(doctorList),200
 

@@ -3,7 +3,7 @@ import json
 from flask_restful import Resource,reqparse
 from flask import request
 from model.userModel import UserModel
-
+from flask_cors import cross_origin
 
 class User(Resource):
     parser = reqparse.RequestParser()
@@ -30,6 +30,8 @@ class User(Resource):
         return (user)
 
     '''@UserModel.token_requiredcurrent_user,'''
+    
+
     def get(self,userid):
         '''if not (current_user['admin'] or current_user['isdoctor']):
             return({"message":"cannot get the specified user"}),401'''
@@ -37,12 +39,14 @@ class User(Resource):
         result = user.get_one('userid',userid)
         return(result),200
 
+
+
     '''@UserModel.token_required'''
-    def put(self,userid):
+    def put(self,hospital_name,userid):
         '''if not (current_user['admin']):
             return({"message":"cannot update patient"}),401'''
         user = UserModel()
-        result = user.promote_user_doc(userid)
+        result = user.promote_user_doc(hospital_name,userid)
         return(result),200
 
     '''@UserModel.token_required'''
@@ -53,8 +57,7 @@ class User(Resource):
         result = user.delete_user(userid)
         return(result)
     
-class UserLogin(Resource):
-
+class Users(Resource):
     def post(self):
         auth = request.authorization
         user = UserModel()
@@ -78,6 +81,10 @@ class UserLogin(Resource):
         return(result),200
 
 
+    def get(self):
+        user = UserModel()
+        result = user.get_all()
+        return({'users':result}),200
 
 
         

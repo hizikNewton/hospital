@@ -1,29 +1,54 @@
 import pymysql
+from werkzeug.security import generate_password_hash
+from firebase import firebase
+from google.cloud import storage
+from google.cloud.storage import client
+import firebase_admin
+import pyrebase
+from firebase_admin import credentials,storage,auth
+import datetime
 
-connection = pymysql.connect(host ='w29ifufy55ljjmzq.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',user= 'uv1eihe9iofpoot5',port = 3306,password = 'ovykxit5f71gx86b',database = 'vzcwzzkfkigclq3d')
+connection = pymysql.connect(host ='er7lx9km02rjyf3n.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',user= 'v98vj2rnkd8xjsbn',port = 3306,password = 'juvam2griraafgz2',database = 'ec40ra1bb5ef3pkr')
 import random as r
 
 
 class PatientModel():
 
     
-    def __init__(self,hospital_name,patient_name='',record='',treatingdoc=0,**args):
+    def __init__(self,hospital_name,patient_surname='',patient_name='',record='',treatingdoc=0,*kwargs):
         self.patient_name = patient_name
+        self.patient_surname = patient_surname
         self.hospital_name = hospital_name
         self.record = record
         self.treatingdoc = treatingdoc
         self.table = '{name}_patients'.format(name=hospital_name)
+        self.timestamp = datetime.datetime.now().isoformat(timespec='seconds')
 
-    def json(self,name,record,treatingdoc_name):
+    def json(self,id,surname,name,imgurl,record,biodata,timestamp,category,treatingdoc_name):
         return {
-            "Name":name,
-            "Record":record,
-            "Treating Doctor":treatingdoc_name
+            'id':id,
+            'surname':surname,
+            'name':name,
+            'imgurl':imgurl,
+            'record':record,
+            'biodata':biodata,
+            'timestamp':timestamp,
+            'category':category,
+            'treatingdoc_name':treatingdoc_name
         }
 
     def insert_patient(self,category,treatingdoc):
+        treatingdoc = self.get_treating_doctor(category)
+        print(treatingdoc)
+        table = self.table
+        patient_surname = self.patient_surname
+        patient_name = self.patient_name
+        record = self.record
+        category = category
+        treatingdoc = treatingdoc
         with connection.cursor() as cursor:
-            query = "INSERT INTO {!s} (patient_name,record,category,doctor_id) VALUES ({!r},{!r},{!r},{!r})".format(self.table,self.patient_name,self.record,category,treatingdoc)
+            query = f"INSERT INTO {table} (patient_surname,patient_name,record,category,doctor_id)VALUES({repr(patient_surname)},{repr(patient_name)},{repr(record)},{repr(category)},{repr(treatingdoc)})"
+            print(query)
             cursor.execute(query)
             connection.commit()
 
@@ -38,9 +63,15 @@ class PatientModel():
 
     def get_treating_doctor(self,category):
         table_name = "({0}_doctors)".format(self.hospital_name)
+        name=self.hospital_name
+        category = category
         with connection.cursor() as cursor:
-            cursor.execute('SELECT * FROM {table_name} where specialization="{category}"'.format(table_name=table_name,category = category))
+            query=(f'SELECT id FROM {name}_doctors WHERE specialization={repr(category)}')
+            print(query)
+            cursor.execute(query)
+
             result = cursor.fetchall()
+            print("this is result",result)
             if result:
                 rx = r.choice(result)
                 return(rx[0])
@@ -87,13 +118,14 @@ class PatientModel():
                 for patient in result:
                     treatingdoc_id = patient[-1]
                     treatingdoc=cursor.execute(('SELECT * FROM {name}_doctors WHERE id={id}'.format(name=hospital_name,id = treatingdoc_id)))
+                    print(patient)
                     if (treatingdoc_id==0):
                         patient_list.append(self.json(patient[1],patient[2],'No Doctor Assigned'))
                     else:
                         cursor.execute(('SELECT * FROM {name}_doctors WHERE id={id}'.format(name=hospital_name,id = treatingdoc_id)))
                         treatingdoc=cursor.fetchone()
                         treatingdoc_name = treatingdoc[2]+' '+treatingdoc[3]
-                        patient_list.append(self.json(patient[1],patient[2],treatingdoc_name))
+                        patient_list.append(self.json(patient[0],patient[1],patient[2],patient[3],patient[4],patient[5],patient[6],patient[7],treatingdoc_name))
                 return patient_list
         connection.close()
 
@@ -168,3 +200,34 @@ class PatientModel():
                 return("Record deleted successfully")
         else:
             return("id not found"),404
+
+
+    def uploadwithPyre(self,filepath,secretkey,current_user):
+        table = self.table
+        filename_user = current_user["username"]
+        cred['private_key'] = secretkey
+        id = current_user["id"]
+        
+        config = {
+        "apiKey": "apiKey",
+        "authDomain": "hepatitis-mobile.firebaseapp.com",
+        "databaseURL": "https://hepatitis-mobile.firebaseio.com",
+        "storageBucket": "hepatitis-mobile.appspot.com",
+        "serviceAccount":cred
+        }
+
+        storage_path = f'image/patient/{userid}/{filename_user}'
+        firebase = pyrebase.initialize_app(config)
+        storage = firebase.storage()
+        storage.child(storage_path).put(filepath)
+        imageurl = storage.child(storage_path).get_url(current_user["id"])
+        
+        with connection.cursor() as cursor:
+            query = f"UPDATE {table} SET imgurl = {repr(imageurl)} WHERE {table}.id={repr(id)}"
+            
+            try:
+                cursor.execute(query)
+                connection.commit()
+                return("upload successful")
+            except:
+                return ("unable to upload image")

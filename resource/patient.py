@@ -22,6 +22,12 @@ class Patient(Resource):
         help = '{"name":"Patient Name"}'
         )
         parser.add_argument(
+        'surname',
+        type = str,
+        required = True,
+        help = '{"name":"Patient Surname"}'
+        )
+        parser.add_argument(
             'record',
             required = True,
             help = "patient's Record"
@@ -33,18 +39,19 @@ class Patient(Resource):
         )
         
         data = parser.parse_args()
-        name = data['name'] 
+        name = data['name']
+        surname = data['surname'] 
         record = data['record']
         category = data['category']
 
         
-        patient=PatientModel(hospital_name,name,record)
+        patient=PatientModel(hospital_name,surname,name,record)
         patient.category = category
         treatingdoc = patient.get_treating_doctor(patient.category)
         patient.treatingdoc = treatingdoc
-        
+        print(treatingdoc)
+        patient.insert_patient(category,treatingdoc)
         try:
-            patient.insert_patient(category,treatingdoc)
             return ("New patient {user} created".format(user=name),201)
         except:
             return ("An Error occurred while creating {user}".format(user=name)),400
@@ -57,7 +64,7 @@ class Patient(Resource):
         hospital = HospitalModel(hospital_name)
         hosp = hospital.check_hospital_exist(hospital_name)
         if hosp:
-            patient = PatientModel(hospital_name,patient_name='',record='')
+            patient = PatientModel(hospital_name)
             patient = patient.get_patient(id,hospital_name)
             return (patient,200)
         else:
@@ -71,6 +78,9 @@ class Patient(Resource):
         patient=PatientModel(hospital_name)
         parser = reqparse.RequestParser()
         parser.add_argument(
+            "surname"
+        )
+        parser.add_argument(
             "name"
         )
         parser.add_argument(
@@ -79,10 +89,20 @@ class Patient(Resource):
         parser.add_argument(
             "category"
         )
+        parser.add_argument(
+            "imgurl"
+        )
+        parser.add_argument(
+            "biodata"
+        )
         data = parser.parse_args()
-        updatedict = {"patient_name":data['name'],
+        updatedict = {
+        "patient_surname":data['surname'],
+        "patient_name":data['name'],
         "record":data['record'],
-        "category":data['category']
+        "category":data['category'],
+        "imgurl":data['imgurl'],
+        "biodata":data['biodata']
         }
         empty = list(filter(lambda i:updatedict[i]==None,updatedict))
         for i in empty:
