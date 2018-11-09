@@ -72,8 +72,11 @@ class DoctorModel:
     def get_doctor_record(self,userid,hospital_name,dbcolumn='*'):
         if (self.check_('doctor_userid',userid)):
             with connection.cursor() as cursor:
+                name = self.hospital_name
+                userid = userid
                 dbcolumn=dbcolumn
-                query=('SELECT {dbcolumn} FROM {name}_doctors WHERE userid={userid}'.format(name=hospital_name,dbcolumn=dbcolumn,userid=userid))
+                query=(f'SELECT {dbcolumn} FROM {name}_doctors WHERE doctor_userid={repr(userid)}')
+                cursor.execute(query)
                 try:
                     cursor.execute(query)
                 except:
@@ -85,7 +88,7 @@ class DoctorModel:
                         return self.json(*result)
                     else:
                         return ({f"{dbcolumn}":result[0]})
-                connection.close()
+                
         else:
             return ("id not found"),404
 

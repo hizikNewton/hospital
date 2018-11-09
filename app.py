@@ -10,6 +10,8 @@ from resource.doctor import Doctor,DoctorRecord,Doctors
 from resource.user import User,Users
 from resource.record import Record
 
+from resource.predict import Predict
+
 
 from model.userModel import UserModel
 
@@ -49,6 +51,8 @@ api.add_resource(Users,'/user/login','/users','/user/admin/<string:userid>')
 
 api.add_resource(Hospital,'/hospital','/hospital/<string:hospital_name>')
 api.add_resource(Hospitals,'/hospitals')
+
+api.add_resource(Predict,'/predict/<string:id>')
 
 if (__name__) == ('__main__'):
     app.run(port=5000,debug=False) 
