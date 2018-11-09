@@ -12,10 +12,10 @@ import firebase_admin
 import pyrebase
 from firebase_admin import credentials,storage,auth
 
+from mycred import cred
 connection = pymysql.connect(host ='er7lx9km02rjyf3n.cbetxkdyhwsb.us-east-1.rds.amazonaws.com',user= 'v98vj2rnkd8xjsbn',port = 3306,password = 'juvam2griraafgz2',database = 'ec40ra1bb5ef3pkr')
 
 
-from mycred import cred
 class DoctorModel:
     
     def __init__(self,hospital_name='',doctor_surname='',doctor_name='',spec='',biodata=''):

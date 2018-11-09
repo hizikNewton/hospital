@@ -5,7 +5,7 @@ from flask_jwt import JWT,jwt_required,jwt
 from flask_cors import CORS
 
 from resource.hospital import Hospital,Hospitals
-from resource.patient import Patient,PatientList
+from resource.patient import Patient,PatientList,PatientRecord
 from resource.doctor import Doctor,DoctorRecord,Doctors
 from resource.user import User,Users
 from resource.record import Record
@@ -38,6 +38,9 @@ parser = reqparse.RequestParser()
 api.add_resource(Patient,'/hospital/<string:hospital_name>/patient','/hospital/<string:hospital_name>/patient/<int:id>')
 api.add_resource(PatientList,'/hospital/<string:hospital_name>/patients')
 
+
+api.add_resource(PatientRecord,'/hospital/<string:hospital_name>/patient/<int:id>/upload')
+
 api.add_resource(Doctor,'/hospital/<string:hospital_name>/doctor','/hospital/<string:hospital_name>/doctor/<string:userid>')
 
 api.add_resource(Doctors,'/hospitals/doctors')
@@ -52,7 +55,7 @@ api.add_resource(Users,'/user/login','/users','/user/admin/<string:userid>')
 api.add_resource(Hospital,'/hospital','/hospital/<string:hospital_name>')
 api.add_resource(Hospitals,'/hospitals')
 
-api.add_resource(Predict,'/predict/<string:id>')
+api.add_resource(Predict,'/predict/<string:hospital_name>/<int:id>')
 
 if (__name__) == ('__main__'):
     app.run(port=5000,debug=False) 

@@ -135,3 +135,34 @@ class PatientList(Resource):
         else:
             return('{name} Hospital does not exist'.format(name = hospital_name)),400
     
+
+
+class PatientRecord(Resource):
+
+    def put(self,hospital_name,id):
+        patient=PatientModel(hospital_name)
+        parser = reqparse.RequestParser()
+        parser.add_argument(
+        "path",
+        type = str,
+        required = True,
+        help = "image path must should be specified:path\\to\\file"
+        )
+        parser.add_argument(
+        "privatekey",
+        type = str,
+        required = True,
+        help = "doctors must have my private key"
+        )
+        data = parser.parse_args()
+        path = data['path']
+        privatekey = data['privatekey']
+        
+        result = patient.uploadwithPyre(path,privatekey,id)
+        if patient.check_id(id):
+            try:
+                return ({"res":result}),200
+            except:
+                return("Verify upload path and ensure image exist"),404
+        else:
+            return({"message":"patient not found"}),404

@@ -7,11 +7,11 @@ from flask_cors import cross_origin
 import dill as pickle
 import pandas as pd
 import os
-
+from model.patientModel import PatientModel
 
 class Predict(Resource):
     
-    def post(self,id):
+    def post(self,hospital_name,id):
         parser = reqparse.RequestParser()
         parser.add_argument(
             'Gender',
@@ -78,5 +78,16 @@ class Predict(Resource):
         with open(path,'rb') as f:
             loaded_model=pickle.load(f)
 
-        my_data=pd.DataFrame({'GENDER':Gender,'control':Control,'AST':AST,'WBC':WBC,'HBVDNA':HBVDNA,'HBeAg':HBeAg,'lymph':lymph})
-        print(loaded_model.predict(my_data))
+        my_data=pd.DataFrame({'GENDER':[Gender],'control':[Control],'AST':[AST],'WBC':[WBC],'HBVDNA':[HBVDNA],'HBeAg':[HBeAg],'lymph':[lymph]})
+
+        predictedval = loaded_model.predict(my_data)
+
+        patient = PatientModel(hospital_name)
+
+        
+        updatedict = {
+        "biodata":f"(status:{predictedval})"           
+            }
+        
+        patient.update_patient_record(id,updatedict)
+        return({'status':predictedval}),200

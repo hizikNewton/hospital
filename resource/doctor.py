@@ -158,7 +158,7 @@ class DoctorRecord(Resource):
     @UserModel.token_required
     def put(current_user,self,hospital_name):
         if not (current_user['isdoctor'] or current_user['admin']):
-            return({"message":"cannot create hospital"}),401
+            return({"message":"user not allowed"}),401
         doctor=DoctorModel(hospital_name)
         parser = reqparse.RequestParser()
         parser.add_argument(
