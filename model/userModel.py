@@ -197,7 +197,6 @@ class UserModel():
             return({"message":"User table deleted successfully"}),200
 
     def login(self,auth):
-        """ 
         if (not auth or not auth['username'] or not auth['password']):
             return make_response("provide username/password",401,{'WWW-Authenticate':'Basic Realm="Login Required!'})
         user = self.get_one('username',auth['username'])
@@ -207,11 +206,10 @@ class UserModel():
         if  check_password_hash(user['password'],auth['password']):
             token = jwt.encode({"user_id":user['userid'],"exp":datetime.datetime.utcnow() + datetime.timedelta(minutes = 1000)},'OLURIN ANUOLUWAPO')
             
-            return ({"token":f"{token}"}) 
+            return ({"token":f"{token}"})
+
         else:
             return make_response("invalid password",401,{'WWW-Authenticate':'Basic Realm="Login Required!'})
-        """
-        return({"token":"your token"})
 
 
     def token_required(f):
