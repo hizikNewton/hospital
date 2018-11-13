@@ -57,11 +57,31 @@ class User(Resource):
         result = user.delete_user(userid)
         return(result)
     
+
 class Users(Resource):
     def post(self):
+        
+        parser = reqparse.RequestParser()
+        parser.add_argument(
+            'username',
+            type=str,
+            required = True,
+            help = 'This field cannot be left blank'
+        )
+        parser.add_argument(
+            'password',
+            type=str,
+            required = True,
+            help = 'This field cannot be left blank'
+        )
+        
+        data = User.parser.parse_args()
+        username = data['username']
+        password = data['password']
         auth = request.authorization
         user = UserModel()
-        result = user.login(auth)
+        '''result = user.login(auth)'''
+        result = user.login(username,password)
         return(result)
 
     '''@UserModel.token_required'''
