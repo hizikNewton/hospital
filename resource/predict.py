@@ -248,7 +248,8 @@ class Predict(Resource):
         
         lymph = data['lymph']
         my_data=pd.DataFrame({'GENDER':[Gender],'control':[Control],'AST':[AST],'WBC':[WBC],'HBVDNA':[HBVDNA],'HBeAg':[HBeAg],'lymph':[lymph]})
-        loaded_model = MakePred.makePrediction()
+        MP = MakePred()
+        loaded_model = MP.makePrediction()
         predictedval = loaded_model.predict(my_data)
         
         '''basedir = os.getcwd()
