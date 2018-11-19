@@ -87,7 +87,12 @@ class Predict(Resource):
         
         '''updatedict = {
         "biodata":f"(status:{predictedval})"           
-            }'''
+            }
         
-        patient.update_patient_record(id,updatedict)
-        return({'status':predictedval}),200
+        patient.update_patient_record(id,updatedict)'''
+        
+        for item in predictedval:
+            if item == 0:
+                return({'status':'Low Risk'}),200
+            else:
+                return({'status':'High Risk'}),200
