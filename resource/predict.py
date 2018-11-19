@@ -85,9 +85,9 @@ class Predict(Resource):
         patient = PatientModel(hospital_name)
 
         
-        updatedict = {
+        '''updatedict = {
         "biodata":f"(status:{predictedval})"           
-            }
+            }'''
         
         patient.update_patient_record(id,updatedict)
         return({'status':predictedval}),200
