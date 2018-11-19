@@ -135,50 +135,53 @@ class Preprocessing (BaseEstimator, TransformerMixin):
         #self.hbv_mean_=df['HBVDNA'].mean()
         return self
     
-#To make sure it works
-X_train,X_test,y_train,y_test=train_test_split(dataset[pred_var],dataset['TARGET'], test_size=0.25,random_state=42)
+class MakePred():
+    def makePrediction:
+        #To make sure it works
+        X_train,X_test,y_train,y_test=train_test_split(dataset[pred_var],dataset['TARGET'], test_size=0.25,random_state=42)
 
-X_train.head()
+        X_train.head()
 
-preprocess=Preprocessing()
+        preprocess=Preprocessing()
 
-preprocess
+        preprocess
 
-preprocess.fit(X_train)
+        preprocess.fit(X_train)
 
-X_train_transformed=preprocess.transform(X_train)
+        X_train_transformed=preprocess.transform(X_train)
 
-X_train_transformed.shape
+        X_train_transformed.shape
 
-X_test_transformed=preprocess.transform(X_test)
+        X_test_transformed=preprocess.transform(X_test)
 
-X_train_transformed.shape
+        X_train_transformed.shape
 
 
-y_test=y_test.replace({'A+':1,'A-':0,'nan':1}).as_matrix()
+        y_test=y_test.replace({'A+':1,'A-':0,'nan':1}).as_matrix()
 
-y_train=y_train.fillna('A+')
-y_train=y_train.replace({'A+':1,'A-':0}).as_matrix()
+        y_train=y_train.fillna('A+')
+        y_train=y_train.replace({'A+':1,'A-':0}).as_matrix()
 
-estimators = []
-model1 = GaussianNB()
-estimators.append(('naive', model1))
-model2 = DecisionTreeClassifier()
-estimators.append(('tree', model2))
-model3 = SVC()
-estimators.append(('svm', model3))
-# create the ensemble model
-#ensemble = VotingClassifier(estimators, voting='hard')
+        estimators = []
+        model1 = GaussianNB()
+        estimators.append(('naive', model1))
+        model2 = DecisionTreeClassifier()
+        estimators.append(('tree', model2))
+        model3 = SVC()
+        estimators.append(('svm', model3))
+        # create the ensemble model
+        #ensemble = VotingClassifier(estimators, voting='hard')
 
-pipe=make_pipeline(Preprocessing(),
-                   StandardScaler(),
-                   VotingClassifier(estimators, voting='hard'))
-pipe.fit(X_train,y_train)
-from sklearn.externals import joblib
-joblib.dump(pipe, 'piped.pkl')
-loaded_model = joblib.load('piped.pkl')
-'''my_data=pd.DataFrame({'GENDER':['male','female'],'ALT':[27,20],'AST':[26,30],'AGE':[40,45],'HBVDNA':[300,200],'HBeAg':['positive','negative'],'HBsAg':['positive','positive']},columns=['GENDER','ALT','AST','AGE','HBVDNA','HBeAg','HBsAg'])
-my_data.as_matrix()'''
+        pipe=make_pipeline(Preprocessing(),
+                           StandardScaler(),
+                           VotingClassifier(estimators, voting='hard'))
+        pipe.fit(X_train,y_train)
+        from sklearn.externals import joblib
+        joblib.dump(pipe, 'piped.pkl')
+        loaded_model = joblib.load('piped.pkl')
+        '''my_data=pd.DataFrame({'GENDER':['male','female'],'ALT':[27,20],'AST':[26,30],'AGE':[40,45],'HBVDNA':[300,200],'HBeAg':['positive','negative'],'HBsAg':['positive','positive']},columns=['GENDER','ALT','AST','AGE','HBVDNA','HBeAg','HBsAg'])
+        my_data.as_matrix()'''
+        return loaded_model
 
 class Predict(Resource):
     
@@ -243,9 +246,10 @@ class Predict(Resource):
         
         lymph = data['lymph']
         my_data=pd.DataFrame({'GENDER':[Gender],'control':[Control],'AST':[AST],'WBC':[WBC],'HBVDNA':[HBVDNA],'HBeAg':[HBeAg],'lymph':[lymph]})
+        loaded_model = MakePred.makePrediction()
         predictedval = loaded_model.predict(my_data)
         
-        basedir = os.getcwd()
+        '''basedir = os.getcwd()
         basedir = os.path.realpath(basedir)
         path = os.path.join(basedir,'model2.pkl')
         with open('./resource/model2.pkl','rb') as f:
@@ -258,7 +262,7 @@ class Predict(Resource):
         patient = PatientModel(hospital_name)
 
         
-        '''updatedict = {
+        updatedict = {
         "biodata":f"(status:{predictedval})"           
             }
         
