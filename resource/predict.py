@@ -177,8 +177,6 @@ joblib.dump(pipe, 'piped.pkl')
 loaded_model = joblib.load('piped.pkl')
 '''my_data=pd.DataFrame({'GENDER':['male','female'],'ALT':[27,20],'AST':[26,30],'AGE':[40,45],'HBVDNA':[300,200],'HBeAg':['positive','negative'],'HBsAg':['positive','positive']},columns=['GENDER','ALT','AST','AGE','HBVDNA','HBeAg','HBsAg'])
 my_data.as_matrix()'''
-data = pd.read_excel('user.xlsx')
-loaded_model.predict(X_train)
 class Predict(Resource):
     
     def post(self,hospital_name,id):
@@ -241,11 +239,13 @@ class Predict(Resource):
         HBVDNA = data['HBVDNA']
         
         lymph = data['lymph']
-
+        my_data=pd.DataFrame({'GENDER':[Gender],'control':[Control],'AST':[AST],'WBC':[WBC],'HBVDNA':[HBVDNA],'HBeAg':[HBeAg],'lymph':[lymph]})
+        predictedval = loaded_model.predict(my_data)
+        
         basedir = os.getcwd()
         basedir = os.path.realpath(basedir)
         path = os.path.join(basedir,'model2.pkl')
-        with open('./model2.pkl','rb') as f:
+        with open('./resource/model2.pkl','rb') as f:
             loaded_model=dill.load(f)
 
         my_data=pd.DataFrame({'GENDER':[Gender],'control':[Control],'AST':[AST],'WBC':[WBC],'HBVDNA':[HBVDNA],'HBeAg':[HBeAg],'lymph':[lymph]})
