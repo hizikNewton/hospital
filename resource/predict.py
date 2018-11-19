@@ -97,7 +97,7 @@ class Preprocessing (BaseEstimator, TransformerMixin):
         
         
         #filling missing value with mean
-        df['AST']=df['AST'].fillna(self.ast_mean_)
+        df['AST']=df['AST'].fillna(df['AST'].mean())
         df['HBVDNA']=df['HBVDNA'].fillna(df['HBVDNA'].mean())
         #dealing with categorical variable
         hbeag_values={'positive':1,'negative':0}
