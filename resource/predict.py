@@ -4,7 +4,7 @@ from flask_jwt import jwt_required
 import json
 from flask_restful import Resource
 from flask_cors import cross_origin
-import dill as pickle
+import dill
 import pandas as pd
 import os
 from model.patientModel import PatientModel
