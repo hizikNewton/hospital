@@ -76,9 +76,9 @@ class Predict(Resource):
         basedir = os.getcwd()
         basedir = os.path.realpath(basedir)
         path = os.path.join(basedir,'model2.pkl')
-        with open(path,'rb') as f:
-            print(f.read())
-            loaded_model=pickle.load(f)
+        with open('./model2.pkl','rb') as f:
+            print(f)
+            loaded_model=dill.load(f)
 
         my_data=pd.DataFrame({'GENDER':[Gender],'control':[Control],'AST':[AST],'WBC':[WBC],'HBVDNA':[HBVDNA],'HBeAg':[HBeAg],'lymph':[lymph]})
 
