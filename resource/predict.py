@@ -124,10 +124,10 @@ class Preprocessing (BaseEstimator, TransformerMixin):
         preprocess=Preprocessing()
 
 
-        preprocess.fit(X_train)
+        #preprocess.fit(X_train)
 
         X_train_transformed=preprocess.transform(X_train)
-
+        
         X_train_transformed.shape
 
         X_test_transformed=preprocess.transform(X_test)
