@@ -115,9 +115,7 @@ class Preprocessing (BaseEstimator, TransformerMixin):
         self.ast_mean_=df['AST'].mean()
         return self
     
-class MakePred():
-    def __init__(self):
-        pass
+
     def makePrediction(self):
         #To make sure it works
         X_train,X_test,y_train,y_test=train_test_split(dataset[pred_var],dataset['Class'], test_size=0.20,random_state=42)
