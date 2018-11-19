@@ -14,7 +14,7 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.pipeline import make_pipeline
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import Imputer
 from sklearn.preprocessing import LabelEncoder,OneHotEncoder
 from sklearn.preprocessing import StandardScaler
