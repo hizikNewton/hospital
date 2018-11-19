@@ -23,6 +23,9 @@ from model.patientModel import PatientModel
 
 
 # Importing the dataset
+
+from sklearn.base import BaseEstimator, TransformerMixin
+
 dataset = pd.read_excel('./resource/hepatitis.xlsx')
 dataset.head()
 dataset.shape
@@ -31,55 +34,52 @@ dataset.isnull().sum()
 pred_var=['GENDER','ALT','AST','AGE','HBVDNA','HBeAg','HBsAg']
 X_train,X_test,y_train,y_test=train_test_split(dataset[pred_var],dataset['TARGET'], test_size=0.25,random_state=0)
 
-#Preprocessing steps 
-X_train['HBeAg']=X_train['HBeAg'].str.lower()
-X_train['HBsAg']=X_train['HBsAg'].str.lower()
-X_train['GENDER']=X_train['GENDER'].str.lower()
-X_train['AGE']=X_train['AGE'].str.lower()
+class Preprocessing (BaseEstimator, TransformerMixin):
 
-X_train['HBVDNA'].replace(['170 MILLION ','NOT DET','850 milli'],['170000000','nan','850000000'],inplace=True)
-X_train['HBeAg'].replace(['postive','negative  positive'],['positive','negative'],inplace=True)
-X_train['HBsAg'].replace(['not done','nan'],inplace=True)
+    #Preprocessing steps 
+    X_train['HBeAg']=X_train['HBeAg'].str.lower()
+    X_train['HBsAg']=X_train['HBsAg'].str.lower()
+    X_train['GENDER']=X_train['GENDER'].str.lower()
+    X_train['AGE']=X_train['AGE'].str.lower()
 
-X_train['AGE']=X_train['AGE'].str.split('yrs').str[0]
-X_train['AGE']=X_train['AGE'].str.split(' ').str[0]
+    X_train['HBVDNA'].replace(['170 MILLION ','NOT DET','850 milli'],['170000000','nan','850000000'],inplace=True)
+    X_train['HBeAg'].replace(['postive','negative  positive'],['positive','negative'],inplace=True)
+    X_train['HBsAg'].replace(['not done','nan'],inplace=True)
 
-X_train['GENDER']=X_train['GENDER'].str.split(' ').str[0]
+    X_train['AGE']=X_train['AGE'].str.split('yrs').str[0]
+    X_train['AGE']=X_train['AGE'].str.split(' ').str[0]
 
-#X_train['TARGET']=X_train['TARGET'].fillna('A+')
-X_train['HBeAg']=X_train['HBeAg'].fillna('positive')
-X_train['HBsAg']=X_train['HBsAg'].fillna('negative')
+    X_train['GENDER']=X_train['GENDER'].str.split(' ').str[0]
 
-X_train['AGE']=X_train['AGE'].astype(float)
-X_train['HBVDNA']=X_train['HBVDNA'].astype(float)
+    #X_train['TARGET']=X_train['TARGET'].fillna('A+')
+    X_train['HBeAg']=X_train['HBeAg'].fillna('positive')
+    X_train['HBsAg']=X_train['HBsAg'].fillna('negative')
+
+    X_train['AGE']=X_train['AGE'].astype(float)
+    X_train['HBVDNA']=X_train['HBVDNA'].astype(float)
 
 
-X_train['ALT']=X_train['ALT'].fillna(X_train['ALT'].mean())
-X_train['AST']=X_train['AST'].fillna(X_train['AST'].mean())
-X_train['AGE']=X_train['AGE'].fillna(X_train['AGE'].mean())
-X_train['HBVDNA']=X_train['HBVDNA'].fillna(X_train['HBVDNA'].mean())
+    X_train['ALT']=X_train['ALT'].fillna(X_train['ALT'].mean())
+    X_train['AST']=X_train['AST'].fillna(X_train['AST'].mean())
+    X_train['AGE']=X_train['AGE'].fillna(X_train['AGE'].mean())
+    X_train['HBVDNA']=X_train['HBVDNA'].fillna(X_train['HBVDNA'].mean())
 
-'''labels_columns=['GENDER','HBeAg','HBsAg']
-for _ in labels_columns:
-    print("List of unique labels{}:{}".format(_,set(X_train[_])))'''
-gender_values={'male':1,'female':0}
-hbeag_values={'positive':1,'negative':0}
-hbsag_values={'positive':1,'negative':0}
+    '''labels_columns=['GENDER','HBeAg','HBsAg']
+    for _ in labels_columns:
+        print("List of unique labels{}:{}".format(_,set(X_train[_])))'''
+    gender_values={'male':1,'female':0}
+    hbeag_values={'positive':1,'negative':0}
+    hbsag_values={'positive':1,'negative':0}
 
-X_train.replace({'GENDER':gender_values,'HBeAg':hbeag_values,'HBsAg':hbsag_values},inplace=True)
+    X_train.replace({'GENDER':gender_values,'HBeAg':hbeag_values,'HBsAg':hbsag_values},inplace=True)
 
-#X_train.head()
-#X_train.isnull().sum()
-X_train=X_train.as_matrix()
+    #X_train.head()
+    #X_train.isnull().sum()
+    X_train=X_train.as_matrix()
 
-#X_train.shape
+    #X_train.shape
 
 #creating a pre-processing estimator that would help in writing better pipeline and in future deployment
-from sklearn.base import BaseEstimator, TransformerMixin
-
-
-class Preprocessing (BaseEstimator, TransformerMixin):
-    
     def __init__(self):
         pass
     
