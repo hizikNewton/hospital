@@ -85,54 +85,34 @@ class Preprocessing (BaseEstimator, TransformerMixin):
         pass
     
     def transform(self,df):
-        pred_var=['GENDER','ALT','AST','AGE','HBVDNA','HBeAg','HBsAg']
+        
+        pred_var=['HBeAg','GENDER','AST','WBC','HBVDNA','lymph','control']
         
         df=df[pred_var]
+        #changing data into lower case
         
         df['HBeAg']=df['HBeAg'].str.lower()
-        df['HBsAg']=df['HBsAg'].str.lower()
         df['GENDER']=df['GENDER'].str.lower()
-        #df['AGE']=df['AGE'].str.lower()
-
-        df['HBVDNA'].replace(['170 MILLION ','NOT DET','850 milli'],[170000000,'nan',850000000],inplace=True)
-        df['HBeAg'].replace(['postive','negative  positive'],['positive','negative'],inplace=True)
-        df['HBsAg'].replace(['not done','nan'],inplace=True)
-        
-            
-        df['AGE']=df['AGE'].str.split('yrs').str[0]
-        df['AGE']=df['AGE'].str.split( ).str[0]
-       
-        
-        df['AGE']=df['AGE'].astype(float)
-
-        df['GENDER']=df['GENDER'].str.split(' ').str[0]
-
-        #X_train['TARGET']=X_train['TARGET'].fillna('A+')
+        #filling nan value in data
         df['HBeAg']=df['HBeAg'].fillna('positive')
-        df['HBsAg']=df['HBsAg'].fillna('negative')
-
         
-        df['HBVDNA']=df['HBVDNA'].astype(float)
-
-
-        df['ALT']=df['ALT'].fillna(self.alt_mean_)
+        
+        #filling missing value with mean
+        df['WBC']=df['WBC'].fillna(self.alt_mean_)
         df['AST']=df['AST'].fillna(self.ast_mean_)
-        df['AGE']=df['AGE'].fillna(df['AGE'].mean())
+        df['lymph']=df['lymph'].fillna(df['lymph'].mean())
         df['HBVDNA']=df['HBVDNA'].fillna(df['HBVDNA'].mean())
-        
-        gender_values={'male':1,'female':0}
+        df['control']=df['control'].fillna(df['control'].mean())
+        #dealing with categorical variable
         hbeag_values={'positive':1,'negative':0}
-        hbsag_values={'positive':1,'negative':0}
+        gender_values={'male':1,'female':0}
 
-        df.replace({'GENDER':gender_values,'HBeAg':hbeag_values,'HBsAg':hbsag_values},inplace=True)
+        df.replace({'GENDER':gender_values,'HBeAg':hbeag_values},inplace=True)
         
         return df.as_matrix()
     def fit(self,df,y=None,**fit_params):
-        
-        self.alt_mean_=df['ALT'].mean()
+        self.alt_mean_=df['WBC'].mean()
         self.ast_mean_=df['AST'].mean()
-        #self.age_mean_=df['AGE'].mean()
-        #self.hbv_mean_=df['HBVDNA'].mean()
         return self
     
 class MakePred():
@@ -140,13 +120,12 @@ class MakePred():
         pass
     def makePrediction(self):
         #To make sure it works
-        X_train,X_test,y_train,y_test=train_test_split(dataset[pred_var],dataset['TARGET'], test_size=0.25,random_state=42)
+        X_train,X_test,y_train,y_test=train_test_split(dataset[pred_var],dataset['Class'], test_size=0.20,random_state=42)
 
         X_train.head()
 
         preprocess=Preprocessing()
 
-        preprocess
 
         preprocess.fit(X_train)
 
@@ -159,16 +138,16 @@ class MakePred():
         X_train_transformed.shape
 
 
-        y_test=y_test.replace({'A+':1,'A-':0,'nan':1}).as_matrix()
+        y_test=y_test.replace({'Positive':1,'Negative':0}).as_matrix()
 
-        y_train=y_train.fillna('A+')
-        y_train=y_train.replace({'A+':1,'A-':0}).as_matrix()
+        #y_train=y_train.fillna('A+')
+        y_train=y_train.replace({'Positive':1,'Negative':0}).as_matrix()
 
         estimators = []
         model1 = GaussianNB()
         estimators.append(('naive', model1))
-        model2 = DecisionTreeClassifier()
-        estimators.append(('tree', model2))
+        '''model2 = DecisionTreeClassifier()
+        estimators.append(('tree', model2))'''
         model3 = SVC()
         estimators.append(('svm', model3))
         # create the ensemble model
@@ -178,11 +157,28 @@ class MakePred():
                            StandardScaler(),
                            VotingClassifier(estimators, voting='hard'))
         pipe.fit(X_train,y_train)
-        from sklearn.externals import joblib
-        joblib.dump(pipe, 'piped.pkl')
-        loaded_model = joblib.load('piped.pkl')
-        '''my_data=pd.DataFrame({'GENDER':['male','female'],'ALT':[27,20],'AST':[26,30],'AGE':[40,45],'HBVDNA':[300,200],'HBeAg':['positive','negative'],'HBsAg':['positive','positive']},columns=['GENDER','ALT','AST','AGE','HBVDNA','HBeAg','HBsAg'])
-        my_data.as_matrix()'''
+        pipe.predict(X_test)
+        '''from sklearn.externals import joblib
+        joblib.dump(pipe, 'model1.pkl')
+        loaded_model = joblib.load('model1.pkl')
+        data = pd.read_excel('user.xlsx')
+        my_data=pd.DataFrame({'GENDER':['male','male'],'control':[20,30.4],'AST':[26,33.1],'WBC':[4000,4900],'HBVDNA':[300,20],'HBeAg':['positive','negative'],'lymph':[65,49]})
+
+        loaded_model.predict(my_data)'''
+        import dill as pickle
+        with open('./resource/model.pkl','wb')as file:
+            pickle.dump(pipe,file)
+
+        with open('./resource/model.pkl','rb')as f:
+            loaded_model=pickle.load(f)
+
+        my_data=pd.DataFrame({'GENDER':['male','male'],'control':[20,30.4],'AST':[26,33.1],'WBC':[4000,4900],'HBVDNA':[300,20],'HBeAg':['positive','negative'],'lymph':[65,49]})
+        output=loaded_model.predict(my_data)
+        for item in output:
+           if item==0:
+               print ("Low Risk")
+           else:
+                 print("High Risk")
         return loaded_model
 
 class Predict(Resource):
