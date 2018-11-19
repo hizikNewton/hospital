@@ -117,7 +117,7 @@ class Preprocessing (BaseEstimator, TransformerMixin):
 
     def makePrediction(self):
         #To make sure it works
-        X_train,X_test,y_train,y_test=train_test_split(dataset[pred_var],test_size=0.20,random_state=42)
+        X_train,X_test,y_train,y_test=train_test_split(dataset[pred_var],dataset,test_size=0.20,random_state=42)
 
         X_train.head()
 
