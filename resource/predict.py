@@ -85,7 +85,7 @@ class Preprocessing (BaseEstimator, TransformerMixin):
     
     def transform(self,df):
         
-        pred_var=['HBeAg','GENDER','AST','WBC','HBVDNA','lymph','control']
+        pred_var=['HBeAg','GENDER','AST','HBVDNA',]
         
         df=df[pred_var]
         #changing data into lower case
@@ -97,11 +97,8 @@ class Preprocessing (BaseEstimator, TransformerMixin):
         
         
         #filling missing value with mean
-        df['WBC']=df['WBC'].fillna(self.alt_mean_)
         df['AST']=df['AST'].fillna(self.ast_mean_)
-        df['lymph']=df['lymph'].fillna(df['lymph'].mean())
         df['HBVDNA']=df['HBVDNA'].fillna(df['HBVDNA'].mean())
-        df['control']=df['control'].fillna(df['control'].mean())
         #dealing with categorical variable
         hbeag_values={'positive':1,'negative':0}
         gender_values={'male':1,'female':0}
