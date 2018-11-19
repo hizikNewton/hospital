@@ -23,7 +23,7 @@ from model.patientModel import PatientModel
 
 
 # Importing the dataset
-dataset = pd.read_excel('hepatitis.xlsx')
+dataset = pd.read_excel('./hepatitis.xlsx')
 dataset.head()
 dataset.shape
 dataset.columns
