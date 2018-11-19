@@ -78,7 +78,6 @@ X_train=X_train.as_matrix()
 from sklearn.base import BaseEstimator, TransformerMixin
 
 
-global loaded_model
 class Preprocessing (BaseEstimator, TransformerMixin):
     
     def __init__(self):
@@ -242,7 +241,7 @@ class Predict(Resource):
         
         lymph = data['lymph']
         my_data=pd.DataFrame({'GENDER':[Gender],'control':[Control],'AST':[AST],'WBC':[WBC],'HBVDNA':[HBVDNA],'HBeAg':[HBeAg],'lymph':[lymph]})
-        MP = MakePred()
+        MP = PreProcessing()
         loaded_model = MP.makePrediction()
         predictedval = loaded_model.predict(my_data)
         
