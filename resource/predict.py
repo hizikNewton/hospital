@@ -241,7 +241,7 @@ class Predict(Resource):
         
         lymph = data['lymph']
         my_data=pd.DataFrame({'GENDER':[Gender],'control':[Control],'AST':[AST],'WBC':[WBC],'HBVDNA':[HBVDNA],'HBeAg':[HBeAg],'lymph':[lymph]})
-        MP = PreProcessing()
+        MP = Preprocessing()
         loaded_model = MP.makePrediction()
         predictedval = loaded_model.predict(my_data)
         
