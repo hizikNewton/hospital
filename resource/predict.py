@@ -77,6 +77,8 @@ X_train=X_train.as_matrix()
 #creating a pre-processing estimator that would help in writing better pipeline and in future deployment
 from sklearn.base import BaseEstimator, TransformerMixin
 
+
+global loaded_model
 class Preprocessing (BaseEstimator, TransformerMixin):
     
     def __init__(self):
@@ -178,7 +180,6 @@ loaded_model = joblib.load('piped.pkl')
 '''my_data=pd.DataFrame({'GENDER':['male','female'],'ALT':[27,20],'AST':[26,30],'AGE':[40,45],'HBVDNA':[300,200],'HBeAg':['positive','negative'],'HBsAg':['positive','positive']},columns=['GENDER','ALT','AST','AGE','HBVDNA','HBeAg','HBsAg'])
 my_data.as_matrix()'''
 
-global loaded_model
 class Predict(Resource):
     
     def post(self,hospital_name,id):
