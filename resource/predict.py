@@ -98,6 +98,7 @@ class Preprocessing (BaseEstimator, TransformerMixin):
         
         #filling missing value with mean
         df['AST']=df['AST'].fillna(df['AST'].mean())
+        df['HBVDNA'] = df['HBVDNA'].replace(['170 MILLION ','NOT DET','850 milli'],['170000000','nan','850000000'],inplace=True)
         df['HBVDNA']=df['HBVDNA'].fillna(df['HBVDNA'].mean())
         #dealing with categorical variable
         hbeag_values={'positive':1,'negative':0}
