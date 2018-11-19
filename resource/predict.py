@@ -78,7 +78,7 @@ class Predict(Resource):
         path = os.path.join(basedir,'model2.pkl')
         with open('./model2.pkl','rb') as f:
             print(f)
-            loaded_model=dill.load(f)
+            loaded_model=dill.dump(f)
 
         my_data=pd.DataFrame({'GENDER':[Gender],'control':[Control],'AST':[AST],'WBC':[WBC],'HBVDNA':[HBVDNA],'HBeAg':[HBeAg],'lymph':[lymph]})
 
