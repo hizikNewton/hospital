@@ -120,7 +120,7 @@ class Preprocessing (BaseEstimator, TransformerMixin):
         X_train,X_test,y_train,y_test=train_test_split(dataset[pred_var],dataset,test_size=0.20,random_state=42)
 
         X_train.head()
-
+        print(X_train)
         preprocess=Preprocessing()
 
 
