@@ -108,7 +108,7 @@ class Preprocessing (BaseEstimator, TransformerMixin):
         
         return df.as_matrix()
     def fit(self,df,y=None,**fit_params):
-        self.alt_mean_=df['WBC'].mean()
+        self.alt_mean_=df['ALT'].mean()
         self.ast_mean_=df['AST'].mean()
         return self
     
@@ -122,7 +122,7 @@ class Preprocessing (BaseEstimator, TransformerMixin):
         preprocess=Preprocessing()
 
 
-        #preprocess.fit(X_train)
+        preprocess.fit(X_train)
 
         X_train_transformed=preprocess.transform(X_train)
         
@@ -151,7 +151,7 @@ class Preprocessing (BaseEstimator, TransformerMixin):
         pipe=make_pipeline(Preprocessing(),
                            StandardScaler(),
                            VotingClassifier(estimators, voting='hard'))
-        #pipe=pipe.fit(X_train,y_train)
+        pipe=pipe.fit(X_train,y_train)
         pipe=pipe.predict(X_test)
         '''from sklearn.externals import joblib
         joblib.dump(pipe, 'model1.pkl')
