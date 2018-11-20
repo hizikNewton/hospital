@@ -79,7 +79,7 @@ class Predict(Resource):
       
         filename = 'model2.pkl'
         loaded_model = None
-        with open('./hospital/'+filename, 'rb')as f:
+        with open('.//..//hospital//'+filename, 'rb')as f:
             loaded_model = pickle.load(f)
 
 
