@@ -151,8 +151,8 @@ class Preprocessing (BaseEstimator, TransformerMixin):
         pipe=make_pipeline(Preprocessing(),
                            StandardScaler(),
                            VotingClassifier(estimators, voting='hard'))
-        pipe.fit(X_train,y_train)
-        pipe.predict(X_test)
+        #pipe=pipe.fit(X_train,y_train)
+        pipe=pipe.predict(X_test)
         '''from sklearn.externals import joblib
         joblib.dump(pipe, 'model1.pkl')
         loaded_model = joblib.load('model1.pkl')
